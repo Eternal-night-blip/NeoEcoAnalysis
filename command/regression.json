@@ -1,0 +1,5 @@
+{
+    "name": "regression",
+    "alias": "reg",
+    "pattern":"reg y, x1 x2 ..."
+}
