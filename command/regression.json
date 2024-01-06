@@ -1,5 +1,6 @@
 {
     "name": "regression",
     "alias": "reg",
-    "pattern":"reg y, x1 x2 ..."
+    "pattern":"reg y, x1 x2 ...",
+    "document":"regression command document"
 }

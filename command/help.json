@@ -1,0 +1,6 @@
+{
+    "name": "help",
+    "alias": null,
+    "pattern":"help x",
+    "document":"help command document"
+}

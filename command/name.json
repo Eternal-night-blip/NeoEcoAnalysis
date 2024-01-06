@@ -1,4 +1,6 @@
 {
+   "help":"",
+   "exit":"",
    "regression":"reg",
    "reg":"regression"
 }

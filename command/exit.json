@@ -1,0 +1,6 @@
+{
+    "name": "exit",
+    "alias": null,
+    "pattern":"exit",
+    "document":"exit command document"
+}
