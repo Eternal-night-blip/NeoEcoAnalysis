@@ -25,7 +25,7 @@ impl CommandBehavior for HelpCommand {
                     }
                 } else {
                     println!(
-                        "help command's paramete  `{}` that should be a command does not exist",
+                        "help command's parameter  `{}` that should be a command does not exist",
                         parameter_name
                     );
                 }

@@ -4,6 +4,7 @@ pub mod compute;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
+use std::rc::Rc;
 
 #[derive(Serialize, Deserialize, Eq, Hash, PartialEq, Clone)]
 pub struct Command {
@@ -77,11 +78,11 @@ impl CommandBuilder {
     }
 }
 
-impl<'a> Command {
+impl Command {
     pub fn explain_from(
         stdin: &String,
-        command_behavior_map: &'a HashMap<Command, Box<dyn CommandBehavior>>,
-    ) -> Option<CommandParser<'a>> {
+        command_behavior_map: &HashMap<Command, Rc<dyn CommandBehavior>>,
+    ) -> Option<CommandParser> {
         // 提取命令名称
         let items: Vec<&str> = stdin.split(",").collect();
         let pattern_prefix = items[0].trim();
@@ -108,19 +109,18 @@ impl<'a> Command {
     fn explain_by_pattern(
         name: &str,
         stdin: &String,
-        command_behavior_map: &'a HashMap<Command, Box<dyn CommandBehavior>>,
-    ) -> Option<CommandParser<'a>> {
+        command_behavior_map: &HashMap<Command, Rc<dyn CommandBehavior>>,
+    ) -> Option<CommandParser> {
         if let Some(command) = Self::deserialize_command(name) {
             let specific_command = command_behavior_map.get(&command).unwrap();
-            let tmp_specific_command = specific_command;
 
             match specific_command.check_pattern(&command.pattern, stdin) {
                 Some(variables) => Some(CommandParser {
-                    specific_command: tmp_specific_command,
+                    specific_command: specific_command.clone(),
                     variables: Some(variables),
                 }),
                 None => Some(CommandParser {
-                    specific_command: tmp_specific_command,
+                    specific_command: specific_command.clone(),
                     variables: None,
                 }),
             }
@@ -226,14 +226,14 @@ pub struct Variables {
     other: Vec<String>,
 }
 
-pub struct CommandParser<'a> {
-    specific_command: &'a Box<dyn CommandBehavior>,
+pub struct CommandParser {
+    specific_command: Rc<dyn CommandBehavior>,
     variables: Option<Variables>,
 }
 
-impl CommandParser<'_> {
-    pub fn command(&self) -> &Box<dyn CommandBehavior> {
-        self.specific_command
+impl CommandParser {
+    pub fn command(&self) -> &dyn CommandBehavior {
+        self.specific_command.as_ref()
     }
 
     pub fn variables(&self) -> &Option<Variables> {
